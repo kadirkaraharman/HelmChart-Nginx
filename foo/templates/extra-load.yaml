@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: load-generator-extra
+spec:
+  containers:
+  - name: {{ .Values.load.extra.name }}
+    image:  {{ .Values.load.extra.image }}
+    command: [{{ .Values.load.bash }}, {{ .Values.load.args }}, {{ .Values.load.script }}]
+  restartPolicy: {{ .Values.load.restart_policy }}

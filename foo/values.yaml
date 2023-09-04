@@ -1,0 +1,37 @@
+# This values using for deployment name labels and on the service section
+app:
+  name: nginx
+
+container:
+  image: nginx
+  port: 80
+
+cpu:
+  request: 200m
+  limit: 500m
+
+service:
+  port: 80
+  label: nginx
+  selector: nginx 
+
+hpa:
+  name: nginx-hpa
+  replica:
+    min: 1
+    max: 5
+  resource:
+    type: cpu
+  average:
+    utilization: 15 # %15 percentage
+
+load:
+  restart_policy: Always
+  extra: 
+    name: load-pod-extra
+    image: busybox:1.28 # we are using 2 load pods for more load as we know
+  name: load-pod
+  image: busybox:1.36 # it should be differenet verison of busybox we can't deploy same image 
+  bash: "/bin/sh"
+  args: "-c"
+  script: "while sleep 0.01; do wget -q -O- http://nginx.default.svc.cluster.local; done" #{{service_name}}.{{service_namespace}}.svc.cluster.local
